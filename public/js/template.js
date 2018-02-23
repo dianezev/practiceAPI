@@ -2,54 +2,99 @@ SS = window.SS || {};
 
 SS.template = (function() {
     'use strict';   
-
-//    // Updates dates for drop-down selectors
-//    var _tplSelectList = _.template(
-//                '<option value="<%= value %>">' +
-//                  '<%= label %>' +
-//                '</option>'
-//    );
-//    
-//    // Updates expense detail in Actual and Budget pages
-//    var _tplDetail = _.template(
-//                '<tr>' +
-//                  '<td></td>' +
-//                  '<td><%= date %></td>' +
-//                  '<td><%= amt %></td>' +
-//                  '<td><%= detail %></td>' +
-//                '</tr>'
-//    );
-//  
-//    // Updates expense subtotals in Actual and Budget pages
-//    var _tplSubCat = _.template(
-//                    '<li  id="<%= code %>">' + 
-//                      '<a href="#">' + 
-//                        '<table>' + 
-//                          '<tbody class="subcat">' + 
-//                            '<tr>' + 
-//                              '<td>' + 
-//                                '<span class= "pointRight">' +
-//                                  '<i class="fa fa-chevron-right"></i>' + 
-//                                '</span>' + 
-//                                '<span class= "pointDown hide">' +
-//                                  '<i class="fa fa-chevron-down"></i>' +
-//                                '</span>' +
-//                                '<%= name %>' + 
-//                              '</td>' +
-//                              '<td></td>' + 
-//                              '<td>' +
-//                                '<%= amt %>' +
-//                              '</td>' +
-//                              '<td></td>' +
-//                            '</tr>' +
-//                          '</tbody>' +
-//                        '</table>' +
-//                      '</a>'
-//);
+  
+    // Generates list of tasks
+    var _tplTodoList = _.template(
+      '<div class = "todoItem row" id="<%= id %>">' +
+      '<div class="todo col-12 col-md-8">' +
+        '<p><%= description %></p>' +
+      '</div>' +
+      '<div class="otherInfo col-12  col-md-4">' +
+        '<div class="row">' +
+          '<div class="dueDate col-6">' +
+            '<p><span class="d-md-none">Due: </span><%= dueDate %></p>' +
+          '</div>' +
+          '<div class="icons col-6">' +
+            '<div class="row">' +
+              '<div class="status col-4" id="<%= statusId %>">' +
+                '<a href="#">' +
+                  '<i class="notDone far fa-square ' +
+                    '<% if (status !== "not done") { %>' +
+                      'd-none' +
+                    '<% } %>' + 
+                    '" title="Click if task is done."></i>' +
+                  '<i class="done fas fa-check-square ' +
+                    '<% if (status !== "done") { %>' +
+                      'd-none' +
+                    '<% } %>' +   
+                  '" title="Task is done. (Click to reset.)"></i>' +
+                '</a>' +
+              '</div>' +
+              '<div class="editTask col-4" id="<%= editId %>">' +
+                '<a href="#">' +
+                  '<i class="fas fa-pencil-alt" title="Edit task"></i>' +
+                '</a>' +
+              '</div>' +
+              '<div class="delTask col-4" id="<%= deleteId %>">' +
+                '<a href="#">' +
+                  '<i class="fas fa-times" title="Delete task"></i>' +
+                '</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
 
   
     var publicAPI = {
             
+        // Get todo list detail
+        getTodoListHTML: function(data) {
+          let ctr = 1;
+          
+          console.log('in getTodoListHTML and data is: ');
+          console.log(data);
+          var todoListHTML = '';
+          
+          for (var i = 0; i < data.length; i++) {
+            todoListHTML += _tplTodoList({id: ('todo_' + i), 
+                                          description: data[i].task, 
+                                          dueDate: data[i].dueDate, 
+                                          status: data[i].status, 
+                                          statusId: ('status_' + i), 
+                                          editId: ('edit_' + i), 
+                                          deleteId: ('delete_' + i)});
+          }
+//            var m = data.sub[i].detail.length;
+//
+//            // Show total for a sub-category
+//            todoListHTML += _tplTodoList({code: dtype + '_' + data.sub[i].code, name: data.sub[i].name, amt: data.sub[i].amt.toLocaleString()});
+//            todoListHTML += '<table class="detail hide"><tbody>';
+//
+//            // Get detail for sub-category, if it exists
+//            if (m > 0) {
+//              for (var j = 0; j < m; j++) {
+//                data.sub[i].detail[j].amt =             
+//                      parseFloat(data.sub[i].detail[j].amt).toFixed(2).toLocaleString();
+//                todoListHTML += _tplDetail(data.sub[i].detail[j]);
+//              }
+//
+//            // Add note if no detail entered yet
+//            } else {
+//              todoListHTML += '<tr>' +
+//                              '<td></td>' +
+//                              '<td>no entries</td>' +
+//                              '<td></td>' +
+//                              '<td></td>' +
+//                            '</tr>';
+//            }
+//            todoListHTML += '</tbody></table></li>';
+//          }
+          return todoListHTML;            
+        }
+          
 //        // Fills detail in Budget and Actual pages
 //        getDetailHTML: function(data, dtype) {
 //          console.log('in getDetailHTML and ' + dtype + ' data is: ');

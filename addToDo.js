@@ -81,10 +81,10 @@ app.get('/todoSheet', function (request, response) {
         console.log("Loaded " + sheet.rows.length + " rows from sheet '" + sheet.name + "'");
 
         // Build column map for later reference - converts column name to column id
-        sheet.columns.forEach(function(column) {
-            columnMap[column.title] = column.id;
-        });
-
+//        sheet.columns.forEach(function(column) {
+//            columnMap[column.title] = column.id;
+//        });
+      
           response.send(sheet);
 
   

@@ -41,8 +41,13 @@ SS.view = (function() {
 //    
 //    
 //
-//    // Public functions here
-//    animateModal: function(target) {
+    // Public functions here
+    refreshTodoList: function(data) {
+      var todoListHTML = template.getTodoListHTML(data);
+      $(todoListDetail).empty().append(todoListHTML);
+    },
+
+    //    animateModal: function(target) {
 //      $(target).animate({height: "toggle", opacity: "toggle"}, "slow");
 //    },
 //    clearEntry: function() {

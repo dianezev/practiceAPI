@@ -113,6 +113,37 @@ SS.model = (function() {
 //
 //  }
   
+//  // Build column map for later reference - converts column name to column id
+//  sheet.columns.forEach(function(column) {
+//      columnMap[column.title] = column.id;
+//  });
+//
+//  // Helper function to find cell in a row
+//  function getCellByColumnName(row, columnName) {
+//      var columnId = columnMap[columnName];
+//      return row.cells.find(function(c) {
+//          return (c.columnId == columnId);
+//      });
+//  }  
+  
+  var columnInfo = {tasks: {}, status: {}, dueDate: {}};
+  
+  // Helper function to get column indexes by title
+  function getColumnInfoByTitle(columns) {
+
+    for (var i = 0; i < columns.length ; i++) {
+      let info = {index: columns[i].index, id: columns[i].id};
+      console.log(columns[i].title);
+      if (columns[i].title === "Tasks") {
+        columnInfo.tasks = info;
+      } else if (columns[i].title === "Status") {
+        columnInfo.status = info;
+      } else if (columns[i].title === "Due Date") {
+        columnInfo.dueDate = info;
+      }
+    }
+  }  
+  
   // Public vars & functions here
   var publicAPI = {
     
@@ -124,8 +155,20 @@ SS.model = (function() {
       
       let reqObject = {url: route,
                   success: function(results) {
+                    let resultsToDisplay = [];
+                    getColumnInfoByTitle(results.columns);
+                    console.log(columnInfo);
+                    
+                    for (var i = 0; i < results.rows.length ; i++) {
+                      resultsToDisplay[i] = {};
+                      resultsToDisplay[i].task = results.rows[i].cells[columnInfo.tasks.index].displayValue;
+                      resultsToDisplay[i].status = results.rows[i].cells[columnInfo.status.index].displayValue;
+                      resultsToDisplay[i].dueDate = results.rows[i].cells[columnInfo.dueDate.index].value;
+                    }
                     console.log('success');
-                    callback(results);
+                    console.log(resultsToDisplay);
+                    
+                    callback(resultsToDisplay);
                   },
                   error: function(xhr, status, error) {
                     alert('ajax ERROR: ' + error);

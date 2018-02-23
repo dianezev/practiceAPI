@@ -43,7 +43,9 @@ SS.controller = (function() {
       console.log('init');
 //      model.getData('/todoSheet');
       model.getData('/todoSheet', function(data) {
+        console.log('in controller and model has returned data:');
         console.log(data);
+        view.refreshTodoList(data);
       });
 //      model.initialize(function(dateArray, date) {
 //        view.fillDateRg(dateArray);

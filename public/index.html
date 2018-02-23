@@ -29,7 +29,7 @@
   .todoItem, .status select option {
     background-color: #fffff9;
   }
-  .task {
+  .todo {
     text-align: left;
   }
   .todoHeaders {
@@ -49,7 +49,7 @@
     background-color: #4871bf; 
     color: white;
   }
-  .task {
+  .todo {
     font-size: 16px;
     margin: auto;
   }
@@ -83,7 +83,7 @@
   .icons {
     font-size: 24px;
   }
-  .delTask, .editTask, .status {
+  .delTodo, .editTodo, .status {
     padding: 0;
   }
   .done {
@@ -92,13 +92,13 @@
   .notDone {
     color: darkgray;
   }
-  .delTask {
+  .delTodo {
     color: #d80606;
   }
-  .editTask {
+  .editTodo {
     color: #4871bf;
   }
-  .task p, .otherInfo, .dueDate p, .status, .icons {
+  .todo p, .otherInfo, .dueDate p, .status, .icons {
     margin-bottom: auto;
     margin-top: auto;
   }
@@ -136,7 +136,7 @@
         <div class="row">
             <div class="hdr col-3">
               <div class="addButton">
-                <button type="button" id="addTask" class="btn"><i class="fas fa-plus"></i> Add a task</button>
+                <button type="button" id="addTodo" class="btn"><i class="fas fa-plus"></i> Add a task</button>
               </div>
             </div>
             <div class="hdr col-6">
@@ -159,72 +159,74 @@
       </div>
     </div>
       
-    <div class = "todoItem row" id="task_1">
-      <div class="task col-12 col-md-8">
-        <p>these could b fosdlkjf lskd jflsj hese could b fosdlkjf lskd jfhese could b fosdlkjf lskd jfhese couldlkjf lskd jfhese could b fosdlkjf lskd jfhese could b fosdlkjf lskd jfhese could b fosdlkjf lskd jf.</p>
-      </div>
-      <div class="otherInfo col-12  col-md-4">
-        <div class="row">
-          <div class="dueDate col-6">
-            <p><span class="d-md-none">Due: </span>5/1/2018</p>
-          </div>
-          <div class="icons col-6">
-            <div class="row">
-              <div class="status col-4" id="status_1">
-                <a href="#">
-                  <i class="notDone d-none far fa-square" title="Click if task is done."></i>
-                  <i class="done fas fa-check-square" title="Task   is done. (Click if not done.)"></i>
-                </a>
-              </div>
-              <div class="editTask col-4" id="edit_1">
-                <a href="#">
-                  <i class="fas fa-pencil-alt" title="Edit task"></i>
-                </a>
-              </div>
-              <div class="delTask col-4" id="delete_1">
-                <a href="#">
-                  <i class="fas fa-times" title="Delete task"></i>
-                </a>
+    <div id="todoListDetail">
+      <div class = "todoItem row" id="todo_1">
+        <div class="todo col-12 col-md-8">
+          <p>these could b fosdlkjf lskd jflsj hese could b fosdlkjf lskd jfhese could b fosdlkjf lskd jfhese couldlkjf lskd jfhese could b fosdlkjf lskd jfhese could b fosdlkjf lskd jfhese could b fosdlkjf lskd jf.</p>
+        </div>
+        <div class="otherInfo col-12  col-md-4">
+          <div class="row">
+            <div class="dueDate col-6">
+              <p><span class="d-md-none">Due: </span>5/1/2018</p>
+            </div>
+            <div class="icons col-6">
+              <div class="row">
+                <div class="status col-4" id="status_1">
+                  <a href="#">
+                    <i class="notDone d-none far fa-square" title="Click if task is done."></i>
+                    <i class="done fas fa-check-square" title="Task is done. (Click if not done.)"></i>
+                  </a>
+                </div>
+                <div class="editTodo col-4" id="edit_1">
+                  <a href="#">
+                    <i class="fas fa-pencil-alt" title="Edit task"></i>
+                  </a>
+                </div>
+                <div class="delTodo col-4" id="delete_1">
+                  <a href="#">
+                    <i class="fas fa-times" title="Delete task"></i>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class = "todoItem row" id="task_2">
-      <div class="task col-12 col-md-8">
-        <p>these could b fosdlkjf lsk.</p>
-      </div>
-      <div class="otherInfo col-12  col-md-4">
-        <div class="row">
-          <div class="dueDate col-6">
-            <p><span class="d-md-none">Due: </span>5/1/2018</p>
-          </div>
-          <div class="icons col-6">
-            <div class="row">
-              <div class="status col-4" id="status_2">
-                <a href="#">
-                  <i class="notDone d-none far fa-square" title="Click if task is done."></i>
-                  <i class="done fas fa-check-square" title="Task   is done. (Click if not done.)"></i>
-                </a>
-              </div>
-              <div class="editTask col-4" id="edit_2">
-                <a href="#">
-                  <i class="fas fa-pencil-alt" title="Edit task"></i>
-                </a>
-              </div>
-              <div class="delTask col-4" id="delete_2">
-                <a href="#">
-                  <i class="fas fa-times" title="Delete task"></i>
-                </a>
+      <div class = "todoItem row" id="todo_2">
+        <div class="todo col-12 col-md-8">
+          <p>these could b fosdlkjf lsk.</p>
+        </div>
+        <div class="otherInfo col-12  col-md-4">
+          <div class="row">
+            <div class="dueDate col-6">
+              <p><span class="d-md-none">Due: </span>5/1/2018</p>
+            </div>
+            <div class="icons col-6">
+              <div class="row">
+                <div class="status col-4" id="status_2">
+                  <a href="#">
+                    <i class="notDone d-none far fa-square" title="Click if task is done."></i>
+                    <i class="done fas fa-check-square" title="Task is done. (Click if not done.)"></i>
+                  </a>
+                </div>
+                <div class="editTodo col-4" id="edit_2">
+                  <a href="#">
+                    <i class="fas fa-pencil-alt" title="Edit task"></i>
+                  </a>
+                </div>
+                <div class="delTodo col-4" id="delete_2">
+                  <a href="#">
+                    <i class="fas fa-times" title="Delete task"></i>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     
+    </div>
   </div>
 
   <!-- Button trigger modal -->
@@ -270,6 +272,8 @@
   crossorigin="anonymous"></script>
 
 <!--  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
