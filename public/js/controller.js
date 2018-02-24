@@ -1,9 +1,4 @@
-/****************************************************
- * Notes on controller.js: 
- * All of these methods call other methods in model.js
- * (for data management) and view.js (for DOM update).
- *
- ****************************************************/
+
 
 SS = window.SS || {};
 
@@ -44,22 +39,14 @@ SS.controller = (function() {
       view.showEditModal();
     },
 
-    // Set dates in date selectors and initialize data arrays (empty)
+    // Initialize data
     initialize: function() {
-      console.log('init');
-//      model.getData('/todoSheet');
       model.getData('/todoSheet', function(data) {
-        console.log('in controller and model has returned data:');
-        console.log(data);
         view.refreshTodoList(data);
       });
-//      model.initialize(function(dateArray, date) {
-//        view.fillDateRg(dateArray);
-//        view.setDate(date);
-//      });
     },
     
-    // Edit a task
+    // Toggle status for a task
     toggleStatus: function(statusId) {
       
       let $status = $('#' + statusId);

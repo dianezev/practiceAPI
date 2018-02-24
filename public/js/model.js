@@ -25,7 +25,7 @@ SS.model = (function() {
   
   var columnInfo = {tasks: {}, status: {}, dueDate: {}};
   
-  // Helper function to get column indexes by title
+  // Helper function to get column indexes and ids by title
   function getColumnInfoByTitle(columns) {
 
     for (var i = 0; i < columns.length ; i++) {
@@ -41,18 +41,17 @@ SS.model = (function() {
     }
   }  
   
-  function mapDescriptionsToRowInfo(rowInfo) {
+  // Map cell info for one row into simple object
+  function mapCellsToRow(cellInfo) {
     let info = {};
     
-    for (var i = 0; i < rowInfo.length ; i++) {
-      let columnId = rowInfo[i].columnId;
-      
-      if (columnId === columnInfo.tasks.id) {
-        info.task = rowInfo[i].displayValue;
-      } else if (columnId === columnInfo.status.id) {
-        info.status = rowInfo[i].displayValue;      
-      } else if (columnId === columnInfo.dueDate.id) {
-        info.dueDate = rowInfo[i].value;
+    for (var i = 0; i < cellInfo.length ; i++) {
+      if (cellInfo[i].columnId === columnInfo.tasks.id) {
+        info.task = cellInfo[i].displayValue;
+      } else if (cellInfo[i].columnId === columnInfo.status.id) {
+        info.status = cellInfo[i].displayValue;      
+      } else if (cellInfo[i].columnId === columnInfo.dueDate.id) {
+        info.dueDate = cellInfo[i].value;
       }
     }
     return info;
@@ -62,33 +61,31 @@ SS.model = (function() {
   var publicAPI = {
     
     // Public vars here
-//    subtotals: [],
 
+    
     // Public functions here  
     getData: function(route, callback) {
       
       let reqObject = {url: route,
-                  success: function(results) {
-                    let resultsToDisplay = [];
-                    getColumnInfoByTitle(results.columns);
-                    console.log(columnInfo);
-                    
-                    for (var i = 0; i < results.rows.length ; i++) {
-                      resultsToDisplay[i] = {};
-                      resultsToDisplay[i].task = results.rows[i].cells[columnInfo.tasks.index].displayValue;
-                      resultsToDisplay[i].status = results.rows[i].cells[columnInfo.status.index].displayValue;
-                      resultsToDisplay[i].dueDate = results.rows[i].cells[columnInfo.dueDate.index].value;
-                      resultsToDisplay[i].rowId = results.rows[i].id;
-                    }
-                    console.log('success');
-                    console.log(resultsToDisplay);
-                    
-                    callback(resultsToDisplay);
-                  },
-                  error: function(xhr, status, error) {
-                    alert('ajax ERROR: ' + error);
-                  }
-                };
+                       success: function(results) {
+                         let resultsToDisplay = [];
+                         let rows = results.rows;
+                         
+                         getColumnInfoByTitle(results.columns);
+                         
+                         for (var i = 0; i < rows.length ; i++) {
+                           resultsToDisplay[i] = {};
+                           resultsToDisplay[i].task = rows[i].cells[columnInfo.tasks.index].displayValue;
+                           resultsToDisplay[i].status = rows[i].cells[columnInfo.status.index].displayValue;
+                           resultsToDisplay[i].dueDate = rows[i].cells[columnInfo.dueDate.index].value;
+                           resultsToDisplay[i].rowId = rows[i].id;
+                         }
+                         callback(resultsToDisplay);
+                       },
+                       error: function(xhr, status, error) {
+                         alert('ajax ERROR: ' + error);
+                       }
+                      };
       
       $.ajax(reqObject);
             
@@ -96,30 +93,19 @@ SS.model = (function() {
     },
     
     toggleStatus: function(info, callback) {
-      // write data - can I just write 1 row?
-      // pull fresh data and either return full set or one row
       let reqObject = {url: info.route,
-                  data: {rowId: info.rowId, status: info.status},
-                  type: 'POST',
-//                  contentType: 'application/json; charset=utf-8',
-                  success: function(rowInfo) {
-                    
-                    let rowObj = mapDescriptionsToRowInfo(rowInfo);
-                    console.log('success in model.toggleStatus');
-                    console.log(rowInfo);
-                    console.log(rowObj);
-
-                    
-                    
-                    callback(rowObj);
-                  },
-                  error: function(xhr, status, error) {
-                    alert('ajax ERROR: ' + error);
-                  }
-                };
-      console.log(reqObject);
+                       data: {rowId: info.rowId, status: info.status},
+                       type: 'POST',
+                       success: function(rows) {
+                         let rowInfo = mapCellsToRow(rows[0].cells);                         
+                         callback(rowInfo);
+                        },
+                        error: function(xhr, status, error) {
+                          alert('ajax ERROR: ' + error);
+                        }
+                      };
       $.ajax(reqObject);
-            
+      
       return;
     }
   };

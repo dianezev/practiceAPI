@@ -97,7 +97,8 @@ app.get('/todoSheet', function (request, response) {
   
         console.log("Loaded " + sheet.rows.length + " rows from sheet '" + sheet.name + "'");
 
-        // Build column map for later reference - converts column name to column id
+        // Build column map for later reference - 
+        // converts column name to column id
         sheet.columns.forEach(function(column) {
             columnMap[column.title] = column.id;
         });
@@ -112,16 +113,6 @@ app.get('/todoSheet', function (request, response) {
     });  
 });
 
-
-//LEFT OFF HERE: see https://github.com/expressjs/body-parser/blob/master/README.md
-
-//// POST /api/users gets JSON bodies
-//app.post('/todoSheet/toggleStatus', jsonParser, function (req, res) {
-//  console.log('in app post');
-//  console.log(req.body);
-//  if (!req.body) return res.sendStatus(400)
-//  // create user in req.body
-//})
 
 app.post('/todoSheet/toggleStatus', jsonParser, function (request, response) {
   console.log('in app post');
@@ -143,26 +134,15 @@ app.post('/todoSheet/toggleStatus', jsonParser, function (request, response) {
   };
 
   ss.sheets.updateRow(updateInfo)
-      .then(function(results) {
-          console.log(results);
-          console.log("Row update succeeded");
-    console.log(results.result[0].cells);
-    
-    
-        response.send(results.result[0].cells);
-      })
-      .catch(function(error) {
-          console.log(error);
-      });
-
-//        var rowToEdit = updateItem(sheet.rows[3].id, columnMap, revisedTaskInfo);
-//        var editRow = {
-//            body: rowToEdit,
-//            sheetId: sheet.id
-//        };
-//
-//        ss.sheets.updateRow(editRow)
-  
+    .then(function(results) {
+    console.log('from updateRow:');
+      console.log(results.result);    
+//      response.send(results.result[0].cells);
+      response.send(results.result);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
 });
 
 
@@ -191,26 +171,7 @@ app.get('/todoSheet/edit', function (request, response) {
   
 });
 
-// Note to self: request.query depends on ajax POST call specifying query string in url
-//app.post('/cors', function (request, response) {
-//
-//    var href = request.query.href;
-//    var id = request.query.id;
-//    var output = request.query.output;
-//        
-//    var storyArray;
-//    
-//    var url = href + 
-//            'query?id=' + id + 
-//            '&output=' + output + 
-//            '&apiKey=' + apiKey;
-//
-//    req(url, function(error, res, body) {
-////        storyArray = getStories(JSON.parse(body));
-//        storyArray = JSON.parse(body);
-//        response.send(storyArray);        
-//    });    
-//});
+
 
 
 if(!module.parent){
