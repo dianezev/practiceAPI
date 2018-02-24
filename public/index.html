@@ -15,9 +15,11 @@
     max-width: 1000px
   }
   
+/*
   .status select.thin {
     height: 1rem;
   }
+*/
 
 /*****************  colors etc ********************/
   .todoItem {
@@ -49,6 +51,10 @@
     background-color: #4871bf; 
     color: white;
   }
+  .addButton button:hover {
+    background-color: #3a5b9a; 
+    color: white;
+  }
   .todo {
     font-size: 16px;
     margin: auto;
@@ -68,15 +74,6 @@
     font-style: italic;
     margin: auto;
   }
-  .status select {
-    background-color: transparent;
-  }
-  .status select option:first-child {
-    color: darkgray;
-  }
-  .status select option:last-child {
-    color: red;
-  }
   .dueDate {
 /*    font-size: 14px;*/
   }
@@ -92,15 +89,33 @@
   .notDone {
     color: darkgray;
   }
-  .delTodo {
+  .delTodo a {
     color: #d80606;
   }
-  .editTodo {
+  .editTodo a {
     color: #4871bf;
+  }
+  a:hover .done {
+    color: #026c48;  
+  }
+  a:hover .notDone {
+    color: #777777;
+  }
+  .delTodo a:hover {
+    color: #a30202;
+  }
+  .editTodo a:hover {
+    color: #3a5892;
   }
   .todo p, .otherInfo, .dueDate p, .status, .icons {
     margin-bottom: auto;
     margin-top: auto;
+  }
+  .show {
+    display: block;
+  }
+  .modal {
+    background-color:rgba(0, 0, 0, .5);
   }
   body {
     background-color: #0E2947;
@@ -240,14 +255,14 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="inputModalDescrip">Add/Edit Task Information</h5>
+          <h5 class="modal-title" id="inputModalDescrip"></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <label for="taskInput" class="col-form-label">Task:</label>
-          <input type="text" class="form-control" id="taskInput">
+          <input type="text" class="form-control" id="taskInput" placeholder="task description">
           <label for="dueDateInput" class="col-form-label">Due date:</label>
           <input type="date" class="form-control" id="dueDateInput">
           <label for="statusInput" class="col-form-label">Status:</label>

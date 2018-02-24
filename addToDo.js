@@ -21,12 +21,16 @@ var client = require('smartsheet');
 var express = require('express');
 var req = require('request');
 
+
 var myBody;
 
 var port = process.env.PORT || 3001;
+
+var bodyParser = require('body-parser');
 var app = express();
 
-
+// create application/json parser
+var jsonParser = bodyParser.json()
 
 // The API identifies columns by Id, but it's more convenient to refer to column names. Store a map here
 var columnMap = {};
@@ -45,16 +49,29 @@ var revisedTaskInfo = {task: "this got revised & updated", date: "2018-05-10"};
 // Initialize client SDK
 var ss = client.createClient({ accessToken: token, logLevel: 'info' });
 
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+//app.use(express.bodyParser());
+app.use(bodyParser.json());
 
 
-
-
+// trying to resolve body parsing
 app.use(function (request, response, next) {
     // experiment with custom middleware fcn...
-  console.log('running FIRST middleware & res is');
+  console.log('running NEW body parse middleware');
+  console.log(JSON.stringify(request.body, null, 2))
 //  console.log(response);
     next();
 });
+
+
+//app.use(function (request, response, next) {
+//    // experiment with custom middleware fcn...
+//  console.log('running FIRST middleware & res is');
+////  console.log(response);
+//    next();
+//});
 
 
 app.use(express.static(__dirname + '/public'));
@@ -81,9 +98,9 @@ app.get('/todoSheet', function (request, response) {
         console.log("Loaded " + sheet.rows.length + " rows from sheet '" + sheet.name + "'");
 
         // Build column map for later reference - converts column name to column id
-//        sheet.columns.forEach(function(column) {
-//            columnMap[column.title] = column.id;
-//        });
+        sheet.columns.forEach(function(column) {
+            columnMap[column.title] = column.id;
+        });
       
           response.send(sheet);
 
@@ -93,6 +110,85 @@ app.get('/todoSheet', function (request, response) {
     .catch(function(error) {
         console.log(error);
     });  
+});
+
+
+//LEFT OFF HERE: see https://github.com/expressjs/body-parser/blob/master/README.md
+
+//// POST /api/users gets JSON bodies
+//app.post('/todoSheet/toggleStatus', jsonParser, function (req, res) {
+//  console.log('in app post');
+//  console.log(req.body);
+//  if (!req.body) return res.sendStatus(400)
+//  // create user in req.body
+//})
+
+app.post('/todoSheet/toggleStatus', jsonParser, function (request, response) {
+  console.log('in app post');
+  
+  // take in body.status and update row instead of get
+  
+//  let sheet = ss.sheets.getSheet({ id: sheetId });
+  console.log('and the req body is....');
+  console.log(request.body)
+  let rowId = request.body.rowId;
+  let status = request.body.status;
+  
+  
+  // Update a row
+  var rowToUpdate = updateStatus(rowId, columnMap, status);
+  var updateInfo = {
+      body: rowToUpdate,
+      sheetId: sheetId
+  };
+
+  ss.sheets.updateRow(updateInfo)
+      .then(function(results) {
+          console.log(results);
+          console.log("Row update succeeded");
+    console.log(results.result[0].cells);
+    
+    
+        response.send(results.result[0].cells);
+      })
+      .catch(function(error) {
+          console.log(error);
+      });
+
+//        var rowToEdit = updateItem(sheet.rows[3].id, columnMap, revisedTaskInfo);
+//        var editRow = {
+//            body: rowToEdit,
+//            sheetId: sheet.id
+//        };
+//
+//        ss.sheets.updateRow(editRow)
+  
+});
+
+
+app.get('/todoSheet/edit', function (request, response) {
+  console.log(request.data);
+  var data = request.data;
+  
+  // Update a row
+//  var rowToEdit = updateItem(sheet.rows[3].id, columnMap, revisedTaskInfo);
+  var rowToEdit = updateItem(sheet.rows[3].id, columnMap, data.value);
+  var editRow = {
+      body: rowToEdit,
+      sheetId: sheet.id
+  };
+
+  ss.sheets.updateRow(editRow)
+      .then(function(results) {
+          console.log(results);
+          console.log("Row update succeeded");
+      })
+      .catch(function(error) {
+          console.log(error);
+      });
+
+  
+  
 });
 
 // Note to self: request.query depends on ajax POST call specifying query string in url
@@ -186,6 +282,22 @@ function getCellByColumnName(row, columnName) {
 //  .catch(function(error) {
 //    console.log(error);
 //  });
+
+function updateStatus(rowSource, columnMap, newStatus) {
+  var row = [
+    {
+      "id": rowSource,
+      "cells": [
+        {
+          "columnId": columnMap["Status"],
+          "value": newStatus
+        }
+      ]
+    }
+  ];
+  return row;
+}
+
 
 function updateItem(rowSource, columnMap, revisedTaskInfo) {
   var row = [
@@ -296,6 +408,7 @@ function evaluateRowAndBuildUpdates(sourceRow) {
 
 function loadSheet() {
 console.log('in loadSheet');
+  
     // Load entire sheet
     ss.sheets.getSheet({ id: sheetId })
     .then(function(sheet, options) {

@@ -1,54 +1,40 @@
-// Add a task
-$('#addTask').on('click', function(e) {
-  e.preventDefault();
-  console.log(e);
-  SS.controller.addTask(this.name);
-});
+console.log('events running');
+
+  /**************************************************
+   * Events
+   *************************************************/
+  // Add a task
+  $('#addTodo').on('click', function(e) {
+    e.preventDefault();
+    SS.controller.addTodo();
+  });
+
+  // Close modal when user cancels
+  $('#inputModal button.close, #inputModal button.btn-secondary').on('click', function(e) {
+    e.preventDefault();
+    SS.controller.cancelEdit();
+  });
 
 
-// Edit a task
-$('[id^="edit_"]').on('click', function(e) {
-  console.log($(e.target).val());
-  SS.controller.editTask($(e.target).val());
-});
+  // Edit a task
+  $('#todoListDetail').on('click', '[id^="edit_"] a', function(e) {
+    e.preventDefault();
+    SS.controller.editTodo(e.currentTarget.parentElement.id);
+  });
 
 
-// Delete a task
-$('[id^="delete_"]').on('click', function(e) {
-  console.log($(e.target).val());
-  SS.controller.deleteTask($(e.target).val());
-});
-
-
-
-// Change status for task
-$('[id^="status_"]').on('click', function(e) {
-  console.log($(e.target).val());
-  SS.controller.toggleStatus($(e.target).val());
-});
+  // Delete a task
+  $('#todoListDetail').on('click', '[id^="delete_"] a', function(e) {
+    e.preventDefault();
+    SS.controller.deleteTodo(e.currentTarget.parentElement.id);
+  });
 
 
 
+  // Change status for task
+  $('#todoListDetail').on('click', '[id^="status_"] a', function(e) {
+    e.preventDefault();
+    SS.controller.toggleStatus(e.currentTarget.parentElement.id);
+  });
 
-/****************************************************/
 
-//$('#m_actual button, #m_budget button').on('click', function(e) {
-//  e.preventDefault();
-//  SS.controller.sendExpense(this.name);
-//});
-//
-//$('footer a').on('click', function() {
-//  SS.view.toTop();
-//});
-//
-//// For drop down of detailed actual & budget data
-//$('.categ').on('click', 'li', function() {
-//    SS.controller.handleDetail(this.id);
-//});
-//
-//// Change date selection
-//$('[id^="date_"]').bind('change', function(e) {
-//  console.log($(e.target).val());
-//  SS.controller.changeDate($(e.target).val());
-//});
-//
