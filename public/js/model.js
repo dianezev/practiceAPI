@@ -4,26 +4,7 @@ SS = window.SS || {};
 SS.model = (function() {
   'use strict';
   
-//  // Private vars here
-//
-//  // Private functions here
-//  
-//  
-  
-//  // Build column map for later reference - converts column name to column id
-//  sheet.columns.forEach(function(column) {
-//      columnMap[column.title] = column.id;
-//  });
-//
-//  // Helper function to find cell in a row
-//  function getCellByColumnName(row, columnName) {
-//      var columnId = columnMap[columnName];
-//      return row.cells.find(function(c) {
-//          return (c.columnId == columnId);
-//      });
-//  }  
-  
-  var columnInfo = {tasks: {}, status: {}, dueDate: {}};
+  let columnInfo = {tasks: {}, status: {}, dueDate: {}};
   
   // Helper function to get column indexes and ids by title
   function getColumnInfoByTitle(columns) {
@@ -57,13 +38,32 @@ SS.model = (function() {
     return info;
   }
   
-  // Public vars & functions here
+  // Public API
   var publicAPI = {
     
-    // Public vars here
-
+    // Add new task
+    addTodoItem: function(info, callback) {
+      let rowInfo = {};
+      
+      let reqObject = {url: info.route,
+                       data: {task: info.task, dueDate: info.dueDate, status: info.status},
+                       type: 'POST',
+                       success: function(rows) {
+                         console.log(rows);
+                         rowInfo = mapCellsToRow(rows[0].cells);                      
+                         rowInfo.rowId = rows[0].id;
+                         callback(rowInfo);
+                        },
+                        error: function(xhr, status, error) {
+                          alert('ajax ERROR: ' + error);
+                        }
+                      };
+      $.ajax(reqObject);
+      
+      return;
+    },
     
-    // Public functions here  
+    // Get all task info
     getData: function(route, callback) {
       
       let reqObject = {url: route,
@@ -93,11 +93,13 @@ SS.model = (function() {
     },
     
     toggleStatus: function(info, callback) {
+      let rowInfo = {};
+      
       let reqObject = {url: info.route,
                        data: {rowId: info.rowId, status: info.status},
                        type: 'POST',
                        success: function(rows) {
-                         let rowInfo = mapCellsToRow(rows[0].cells);                         
+                         rowInfo = mapCellsToRow(rows[0].cells);                                               
                          callback(rowInfo);
                         },
                         error: function(xhr, status, error) {

@@ -1,4 +1,3 @@
-console.log('Starting');
 
 var config = require("./config.json");
 
@@ -42,9 +41,6 @@ var options = {
     includeAll: true
   }
 };
-// These vars just for practice...
-var newTaskInfo = {task: "something new", status: "not done", date: "2018-05-02"};
-var revisedTaskInfo = {task: "this got revised & updated", date: "2018-05-10"};
 
 // Initialize client SDK
 var ss = client.createClient({ accessToken: token, logLevel: 'info' });
@@ -146,6 +142,30 @@ app.post('/todoSheet/toggleStatus', jsonParser, function (request, response) {
 });
 
 
+// Add a task
+app.post('/todoSheet/addTodo', jsonParser, function (request, response) {
+  let task = request.body.task;
+  let status = request.body.status;
+  let dueDate = request.body.dueDate;
+
+  let addNewRow = {
+      body: addItem(columnMap, {task, status, dueDate}),
+      sheetId: sheetId
+  };
+  console.log(addNewRow);
+  ss.sheets.addRows(addNewRow)
+      .then(function(results) {
+          console.log(results);
+          console.log("Add row succeeded");
+          response.send(results.result);
+      })
+      .catch(function(error) {
+          console.log(error);
+      });  
+});
+
+
+
 app.get('/todoSheet/edit', function (request, response) {
   console.log(request.data);
   var data = request.data;
@@ -155,7 +175,7 @@ app.get('/todoSheet/edit', function (request, response) {
   var rowToEdit = updateItem(sheet.rows[3].id, columnMap, data.value);
   var editRow = {
       body: rowToEdit,
-      sheetId: sheet.id
+      sheetId: sheetId
   };
 
   ss.sheets.updateRow(editRow)
@@ -285,12 +305,13 @@ function updateItem(rowSource, columnMap, revisedTaskInfo) {
 
 
 function addItem(columnMap, taskInfo) {
+  console.log(columnMap);
   var row = [
     {
       "toTop": true,
       "cells": [
         {
-          "columnId": columnMap["Task"],
+          "columnId": columnMap["Tasks"],
           "value": taskInfo.task
         },
         {
@@ -298,8 +319,8 @@ function addItem(columnMap, taskInfo) {
           "value": taskInfo.status
         },
         {
-          "columnId": columnMap["Date"],
-          "value": taskInfo.date
+          "columnId": columnMap["Due Date"],
+          "value": taskInfo.dueDate
         }
       ]
     }
