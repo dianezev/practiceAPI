@@ -9,7 +9,7 @@ SS.model = (function() {
   // Helper function to get column indexes and ids by title
   function getColumnInfoByTitle(columns) {
 
-    for (var i = 0; i < columns.length ; i++) {
+    for (let i = 0; i < columns.length ; i++) {
       let info = {index: columns[i].index, id: columns[i].id};
       console.log(columns[i].title);
       if (columns[i].title === "Tasks") {
@@ -22,11 +22,11 @@ SS.model = (function() {
     }
   }  
   
-  // Map cell info for one row into simple object
+  // Helper function maps cell info for one row into object
   function mapCellsToRow(cellInfo) {
     let info = {};
     
-    for (var i = 0; i < cellInfo.length ; i++) {
+    for (let i = 0; i < cellInfo.length ; i++) {
       if (cellInfo[i].columnId === columnInfo.tasks.id) {
         info.task = cellInfo[i].displayValue;
       } else if (cellInfo[i].columnId === columnInfo.status.id) {
@@ -39,28 +39,21 @@ SS.model = (function() {
   }
   
   // Public API
-  var publicAPI = {
+  let publicAPI = {
     
-    // Add new task
-    addTodoItem: function(info, callback) {
-      let rowInfo = {};
-      
-      let reqObject = {url: info.route,
-                       data: {task: info.task, dueDate: info.dueDate, status: info.status},
+    // Delete a task
+    deleteTodoItem: function(route, rowId, callback) {
+      let reqObject = {url: route,
+                       data: {rowId},
                        type: 'POST',
-                       success: function(rows) {
-                         console.log(rows);
-                         rowInfo = mapCellsToRow(rows[0].cells);                      
-                         rowInfo.rowId = rows[0].id;
-                         callback(rowInfo);
+                       success: function() {
+                         callback();
                         },
                         error: function(xhr, status, error) {
                           alert('ajax ERROR: ' + error);
                         }
                       };
       $.ajax(reqObject);
-      
-      return;
     },
     
     // Get all task info
@@ -73,7 +66,7 @@ SS.model = (function() {
                          
                          getColumnInfoByTitle(results.columns);
                          
-                         for (var i = 0; i < rows.length ; i++) {
+                         for (let i = 0; i < rows.length ; i++) {
                            resultsToDisplay[i] = {};
                            resultsToDisplay[i].task = rows[i].cells[columnInfo.tasks.index].displayValue;
                            resultsToDisplay[i].status = rows[i].cells[columnInfo.status.index].displayValue;
@@ -88,15 +81,16 @@ SS.model = (function() {
                       };
       
       $.ajax(reqObject);
-            
-      return;
     },
-    
-    toggleStatus: function(info, callback) {
+
+    // TBD: Consider either updating a single cell instead of full row or consolidating into updateTodoItem
+    toggleStatus: function(route, info, rowId, callback) {
+      console.log(info);
+      console.log({status: info.status, rowId});
       let rowInfo = {};
       
-      let reqObject = {url: info.route,
-                       data: {rowId: info.rowId, status: info.status},
+      let reqObject = {url: route,
+                       data: {status: info.status, rowId},
                        type: 'POST',
                        success: function(rows) {
                          rowInfo = mapCellsToRow(rows[0].cells);                                               
@@ -107,8 +101,28 @@ SS.model = (function() {
                         }
                       };
       $.ajax(reqObject);
+    },
+    
+    /*
+     * Save info for new or edited task
+     * (Note that rowId is null for a new task)
+     */
+    updateTodoItem: function(route, info, rowId, callback) {
+      let rowInfo = {};
       
-      return;
+      let reqObject = {url: route,
+                       data: {task: info.task, dueDate: info.dueDate, status: info.status, rowId},
+                       type: 'POST',
+                       success: function(rows) {
+                         rowInfo = mapCellsToRow(rows[0].cells);                      
+                         rowInfo.rowId = rows[0].id;
+                         callback(rowInfo);
+                        },
+                        error: function(xhr, status, error) {
+                          alert('ajax ERROR: ' + error);
+                        }
+                      };
+      $.ajax(reqObject);
     }
   };
   return publicAPI;

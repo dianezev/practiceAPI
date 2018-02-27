@@ -2,6 +2,9 @@
 /**************************************************
  * Events
  *************************************************/
+  
+'use strict';
+
 // Open modal in order to add a task
 $('#addTodo').on('click', function(e) {
   e.preventDefault();
@@ -26,15 +29,11 @@ $('#inputModal button.save').on('click', function(e) {
   SS.controller.saveTodoInfo(e.target.innerText);
 });
 
-
-
 // Delete a task
 $('#todoListDetail').on('click', '[id^="delete_"] a', function(e) {
   e.preventDefault();
   SS.controller.deleteTodo(e.currentTarget.parentElement.id);
 });
-
-
 
 // Change status for task
 $('#todoListDetail').on('click', '[id^="status_"] a', function(e) {

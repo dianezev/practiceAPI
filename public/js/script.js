@@ -13,6 +13,10 @@
  * add up arrow at bottom
  * get rid of extraneous stuff in addToDo
  * rename addToDo
+ * constants
+ * config /.env?
+ * test invalid dates entered on smartsheet side
+ *
  *
  */
 

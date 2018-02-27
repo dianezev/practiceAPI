@@ -5,7 +5,7 @@ SS.template = (function() {
     'use strict';   
 
     // Generates HTML for one task
-    var _tplTodoItem = _.template(
+    let _tplTodoItem = _.template(
       '<div class="todo col-12 col-md-8">' +
         '<p><%= description %></p>' +
       '</div>' +
@@ -47,16 +47,16 @@ SS.template = (function() {
   );
   
   /*
-   * Get short date. (used string methods instead of Date methods 
-   * to work around issue with date mismatch - 5/1 converted to 4/30...)                       */   
+   * Helper function returns short date. (used string methods instead of Date methods 
+   * to work around issue with date mismatch - 5/1 in ISO converted to 4/30...)
+   */   
   function getShortDate(isoDate) {
     let shortDate = '';
-    let y, m, d;
     
     if ((typeof isoDate === 'string') && (isoDate.length === 10)) {
-      y = isoDate.slice(0,4);
-      m = trimLeading0(isoDate.slice(5,7));
-      d = trimLeading0(isoDate.slice(8));
+      let y = isoDate.slice(0,4);
+      let m = trimLeading0(isoDate.slice(5,7));
+      let d = trimLeading0(isoDate.slice(8));
       shortDate = (m + '/' + d + '/' + y)
     }
     
@@ -67,42 +67,25 @@ SS.template = (function() {
     }
   }
   
+  // Helper function returns object that gets passed to _tpl function
+  function getTemplateInfo(rowInfo, i) {
+    
+    return {description: rowInfo.task,
+            dueDate: getShortDate(rowInfo.dueDate),
+            dueDateId: ('dueDate_' + i),
+            status: rowInfo.status,
+            statusId: ('status_' + i),
+            editId: ('edit_' + i),
+            deleteId: ('delete_' + i)};
+  }
+  
   // Public API
-  var publicAPI = {
+  let publicAPI = {
 
-      // Get all todo list detail
-      getTodoListHTML: function(data) {
-        let todoListHTML = '';
-
-        for (var i = 0; i < data.length; i++) {
-          todoListHTML += '<div class = "todoItem row" data-id="' + data[i].rowId + '" id="todo_' + i + '">';
-
-          todoListHTML += _tplTodoItem({description: data[i].task, 
-                                        dueDate: getShortDate(data[i].dueDate),
-                                        dueDateId: ('dueDate_' + i),
-                                        status: data[i].status, 
-                                        statusId: ('status_' + i), 
-                                        editId: ('edit_' + i), 
-                                        deleteId: ('delete_' + i)});
-          todoListHTML += '</div>';
-        }
-        return todoListHTML;            
-      },
-
-      // Get detail for NEW todo item
+      // Get detail for NEW todo item (includes outer div with data-id set to rowId)
       getNewTodoItemHTML: function(rowInfo, i) {
-        console.log(rowInfo);
-        let newTodoListHTML = '';
-
-        newTodoListHTML += '<div class = "todoItem row" data-id="' + rowInfo.rowId + '" id="todo_' + i + '">';
-
-        newTodoListHTML += _tplTodoItem({description: rowInfo.task, 
-                                      dueDate: getShortDate(rowInfo.dueDate),
-                                      dueDateId: ('dueDate_' + i),
-                                      status: rowInfo.status, 
-                                      statusId: ('status_' + i), 
-                                      editId: ('edit_' + i), 
-                                      deleteId: ('delete_' + i)});
+        let newTodoListHTML = '<div class = "todoItem row" data-id="' + rowInfo.rowId + '" id="todo_' + i + '">';
+        newTodoListHTML += _tplTodoItem(getTemplateInfo(rowInfo, i));
         newTodoListHTML += '</div>';
 
         return newTodoListHTML;            
@@ -110,15 +93,22 @@ SS.template = (function() {
 
       // Get refreshed detail for an existing todo item
       getTodoItemHTML: function(rowInfo, i) {
-
-        var todoItemHTML = _tplTodoItem({description: rowInfo.task,
-                                         dueDate: getShortDate(rowInfo.dueDate),
-                                         dueDateId: ('dueDate_' + i),
-                                         status: rowInfo.status,
-                                         statusId: ('status_' + i),
-                                         editId: ('edit_' + i),
-                                         deleteId: ('delete_' + i)});
+        let todoItemHTML = _tplTodoItem(getTemplateInfo(rowInfo, i));
+        
         return todoItemHTML;            
+      },
+    
+      // Get all todo list detail
+      getTodoListHTML: function(data) {
+        let todoListHTML = '';
+
+        for (let i = 0; i < data.length; i++) {
+          todoListHTML += '<div class = "todoItem row" data-id="' + data[i].rowId + '" id="todo_' + i + '">';
+          todoListHTML += _tplTodoItem(getTemplateInfo(data[i], i));
+          todoListHTML += '</div>';
+        }
+        
+        return todoListHTML;            
       }
   };
 

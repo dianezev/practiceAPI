@@ -1,4 +1,3 @@
-
 SS = window.SS || {};
 
 SS.controller = (function() {
@@ -8,16 +7,20 @@ SS.controller = (function() {
   let view = SS.view;
   let codes = {rowId: -1, index: -1};
   
-  // Use max ctr to keep track of indexes that are used 
-  // in HTML id selectors for each task. 
-  // Increment when adding a task to ensure that
-  // unique ids are used for each addition.
-  // (Note these indexes won't be contiguous after a deletion -
-  // so maxCtr doesn't nec. equal total # of tasks.)
+  /*
+   * Use max ctr to keep track of indexes that are used 
+   * in HTML id selectors for each task. 
+   * Increment when adding a task to ensure that
+   * unique ids are used for each addition.
+   * (Note these indexes won't be contiguous after a deletion -
+   * so maxCtr doesn't nec. equal total # of tasks.)
+   */
   let maxCtr = 0;
     
-  // Parses an index off of various id names ('status_5', 'edit_4' etc.)
-  // and sets private var to keep track of rowId & index during edit
+  /*
+   * Parses an index off of various id names ('status_5', 'edit_4' etc.)
+   * and sets private var to keep track of rowId & index during edit
+   */
   function updateCodes(idName) {
     
     if (idName === '') {
@@ -26,27 +29,15 @@ SS.controller = (function() {
       codes.index = idName.slice(idName.indexOf('_') + 1);
       codes.rowId = $('#todo_' + codes.index)[0].dataset.id;
     }
-    
-    return;
   }
 
   function resetCodes() {
     codes.index = -1;
     codes.rowId = -1;
-    
-    return;
   }
   
   // Public API
-  var publicAPI = {
-    
-    // Show modal to add or edit a task.
-    // First add a 'rowId' val to info argument before calling view.showEditAddModal()
-    // (if adding task, use rowId = -1; if editing task, use dataset.id to get rowId)
-    showModal: function(idName) {
-      (typeof idName === "undefined") ? resetCodes() : updateCodes(idName);
-      view.showModal(codes.index);
-    },
+  let publicAPI = {
     
     // Close modal with Cancel
     cancelModal: function() {
@@ -54,11 +45,22 @@ SS.controller = (function() {
     },
     
     // Delete a task
-    deleteTodo: function(data) {
-      console.log('del');
+    deleteTodo: function(deleteId) {
+      console.log(deleteId);
+      
+//      let curStatus = $('#' + statusId)[0].dataset.status;
+//      let newStatus = (curStatus === "not done") ? "done" : "not done";
+//      let info = {status: newStatus};
+      let route = '/todoSheet/delete';
+      
+      updateCodes(deleteId);
+      
+      model.deleteTodoItem(route, codes.rowId, function() {
+        view.removeItem(codes.index);
+      });
     },
-
-    // Initialize data
+    
+    // Initialize data for all tasks
     initialize: function() {
       model.getData('/todoSheet', function(data) {
         maxCtr = data.length;
@@ -66,41 +68,62 @@ SS.controller = (function() {
       });
     },
     
-    // Save changes and refresh display
+    // Save changes and refresh display for new or edited task
     saveTodoInfo: function(btnText) {
       let info = {};
-      let index;
+      let route;
       
       info.task = $('#taskInput').val();
       info.dueDate = $('#dueDateInput').val();
       info.status = $('#statusInput').val();
       
-      if (btnText = 'Save new task') {
-        console.log(info);
-        index = maxCtr++;
-        info.route = '/todoSheet/addTodo';
-
-        model.addTodoItem(info, function (data) {
-          view.displayNewTodoItem(data, index);
+      /*
+       * Save data for ADD task and get a new
+       * index to use in the HTML ids (since this is a new task)
+       */
+      if (btnText === 'Save new task') {
+        codes.index = maxCtr++;
+        route = '/todoSheet/add';
+        
+        model.updateTodoItem(route, info, null, function (data) {
+          view.displayNewTodoItem(data, codes.index);
+        });
+        
+      /*
+       * Save data for EDIT task. Use the rowId and index that was
+       * stored to 'codes' when user selected edit option (see controller.showModal)
+       */
+      } else if (btnText === 'Save changes') {
+        route = '/todoSheet/edit';
+        
+        model.updateTodoItem(route, info, codes.rowId, function (data) {
+          view.refreshTodoItem(data, codes.index);
         });      
-      } else if (btnText = 'Save changes') {
-        // TBD
       }
     },
+    
+    /*
+     * Show modal to add or edit a task:
+     * Use private var 'codes' to keep track of codes.rowId and
+     * codes.index, where index is used to reference HTML id names.
+     * Reset both codes to -1 when adding a new item.
+     */
+    showModal: function(idName) {
+      (typeof idName === "undefined") ? resetCodes() : updateCodes(idName);
+      view.showModal(codes.index);
+    },
 
-    // Toggle status for a task
+    // Toggle done/not done status for a task
     toggleStatus: function(statusId) {
       
       let curStatus = $('#' + statusId)[0].dataset.status;
       let newStatus = (curStatus === "not done") ? "done" : "not done";
-      let info = {};
+      let info = {status: newStatus};
+      let route = '/todoSheet/toggleStatus';
       
       updateCodes(statusId);
-      info.route = '/todoSheet/toggleStatus';
-      info.rowId = codes.rowId;
-      info.status = newStatus;
       
-      model.toggleStatus(info, function(rowInfo) {
+      model.toggleStatus(route, info, codes.rowId, function(rowInfo) {
         view.refreshStatus(rowInfo, codes.index);
       });
     }    

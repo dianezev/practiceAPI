@@ -4,37 +4,33 @@ SS = window.SS || {};
 SS.view = (function() {
   'use strict';
   
-  var template = SS.template;
+  let template = SS.template;
   
+  // Helper function returns ISO date from mm/dd/yyyy format
   function getISODate(date) {
-    var isoDate = '';
-    var d = new Date(date);
-    var day;
-    var month;
+    let isoDate = '';
+    let d = new Date(date);
     
     if (d instanceof Date && !isNaN(d.valueOf())) {
-      month = (d.getMonth() < 9) ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
-      day = (d.getDate() < 10) ? '0' + d.getDate() : d.getDate();
+      let month = (d.getMonth() < 9) ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
+      let day = (d.getDate() < 10) ? '0' + d.getDate() : d.getDate();
       isoDate = d.getFullYear() + '-' + month + '-' + day;
     }
-    console.log('ret ' + isoDate);
     return isoDate;
   }
-  //LEFT OFF HERE: test add task with no date
-  
   
   // Public API
-  var publicAPI = {
-    
-    // Refresh UI after adding task
-    displayNewTodoItem: function(rowInfo, index) {
-      var newTodoItemHTML = template.getNewTodoItemHTML(rowInfo, index);
-      $('#todoListDetail').prepend(newTodoItemHTML);
-      $('#inputModal').removeClass('show');
-    },
+  let publicAPI = {
     
     // Close modal without saving any edits/additions
     cancelEditModal: function() {
+      $('#inputModal').removeClass('show');
+    },
+    
+    // Refresh UI after adding task
+    displayNewTodoItem: function(rowInfo, index) {
+      let newTodoItemHTML = template.getNewTodoItemHTML(rowInfo, index);
+      $('#todoListDetail').prepend(newTodoItemHTML);
       $('#inputModal').removeClass('show');
     },
     
@@ -43,11 +39,23 @@ SS.view = (function() {
       let todoItemHTML = template.getTodoItemHTML(rowInfo, index);
       $('#todo_' + index).empty().append(todoItemHTML);
     },
+
+    // Refresh UI after editing task
+    refreshTodoItem: function(rowInfo, index) {
+      let todoItemHTML = template.getTodoItemHTML(rowInfo, index);
+      $('#todo_' + index).empty().append(todoItemHTML);
+      $('#inputModal').removeClass('show');
+    },
     
     // Refresh UI for all tasks
     refreshTodoList: function(data) {
-      var todoListHTML = template.getTodoListHTML(data);
+      let todoListHTML = template.getTodoListHTML(data);
       $('#todoListDetail').empty().append(todoListHTML);
+    },
+
+    // Refresh UI after deleting task
+    removeItem: function(index) {
+      $('#todo_' + index).remove();
     },
     
     // Display modal for user add/edit
@@ -73,7 +81,7 @@ SS.view = (function() {
                };
       }
       
-      // Put info into modal
+      // Put task info into modal
       $('#inputModalDescrip').empty().append(info.title);
       $('#taskInput').empty().val(info.task);
       $('#dueDateInput').empty().val(getISODate(info.dueDate));
