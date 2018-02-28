@@ -1,8 +1,7 @@
-
 /**************************************************
  * Events
  *************************************************/
-  
+
 'use strict';
 
 // Open modal in order to add a task
@@ -41,4 +40,10 @@ $('#todoListDetail').on('click', '[id^="status_"] a', function(e) {
   SS.controller.toggleStatus(e.currentTarget.parentElement.id);
 });
 
-
+// Scroll to top
+$('#gotoTop').click(function (e) {
+  e.preventDefault();
+    $('html, body').animate({
+        scrollTop: $('#main').offset().top
+    }, 'slow');
+});

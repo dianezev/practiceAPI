@@ -34,6 +34,11 @@ SS.view = (function() {
       $('#inputModal').removeClass('show');
     },
     
+    // Hide wait symbol when read/write finished
+    hideLoader: function() {
+      $('.loader').fadeOut('slow');
+    },
+
     // Refresh UI after status change
     refreshStatus: function(rowInfo, index) {
       let todoItemHTML = template.getTodoItemHTML(rowInfo, index);
@@ -51,11 +56,19 @@ SS.view = (function() {
     refreshTodoList: function(data) {
       let todoListHTML = template.getTodoListHTML(data);
       $('#todoListDetail').empty().append(todoListHTML);
+      $('#header').fadeIn().removeClass('d-none');
+      $('#content').fadeIn().removeClass('d-none');
+      $('#footer').fadeIn().removeClass('d-none');
     },
-
+    
     // Refresh UI after deleting task
     removeItem: function(index) {
       $('#todo_' + index).remove();
+    },
+
+    // Show wait symbol when waiting for read/write
+    showLoader: function() {
+      $('.loader').fadeIn('slow');
     },
     
     // Display modal for user add/edit
@@ -73,9 +86,9 @@ SS.view = (function() {
         
       // For EDIT: get task, due date etc from selected task
       } else {
-        info = {title: 'Edit task information', 
-                task: $('#todo_' + index + ' .todo p').text(), 
-                status: $('#status_' + index).data('status'), 
+        info = {title: 'Edit task information',
+                task: $('#todo_' + index + ' .todo p').text(),
+                status: $('#status_' + index).data('status'),
                 dueDate: $('#dueDate_' + index).text(),
                 confirmButton: 'Save changes'
                };

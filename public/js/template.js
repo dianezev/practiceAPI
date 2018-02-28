@@ -1,49 +1,53 @@
-
 SS = window.SS || {};
 
 SS.template = (function() {
-    'use strict';   
+  'use strict';
 
-    // Generates HTML for one task
-    let _tplTodoItem = _.template(
-      '<div class="todo col-12 col-md-8">' +
-        '<p><%= description %></p>' +
-      '</div>' +
-      '<div class="otherInfo col-12  col-md-4">' +
-        '<div class="row">' +
-          '<div class="dueDate col-6">' +
-            '<span class="d-md-none">Due: </span><p id="<%= dueDateId %>"><%= dueDate %></p>' +
-          '</div>' +
-          '<div class="icons col-6">' +
-            '<div class="row">' +
-              '<div class="status col-4" id="<%= statusId %>" data-status="<%= status %>">' +
-                '<a href="#">' +
-                  '<i class="notDone far fa-square ' +
-                    '<% if (status !== "not done") { %>' +
-                      'd-none' +
-                    '<% } %>' + 
-                    '" title="Click to mark as done."></i>' +
-                  '<i class="done fas fa-check-square ' +
-                    '<% if (status !== "done") { %>' +
-                      'd-none' +
-                    '<% } %>' +   
-                  '" title="Task is done. (Click to reset.)"></i>' +
-                '</a>' +
-              '</div>' +
-              '<div class="editTodo col-4" id="<%= editId %>">' +
-                '<a href="#">' +
-                  '<i class="fas fa-pencil-alt" title="Edit task"></i>' +
-                '</a>' +
-              '</div>' +
-              '<div class="delTodo col-4" id="<%= deleteId %>">' +
-                '<a href="#">' +
-                  '<i class="fas fa-times" title="Delete task"></i>' +
-                '</a>' +
-              '</div>' +
+  /*
+   * Generates HTML for one task
+   * Note: Font-awesomne icons are toggled for the 'done'/'not done' option instead
+   * of using a <select> element or <input type="checkbox">. The HTML/JS is a little
+   * more cumbersome but the UI is cleaner with 3 consistent icons for each task.
+   */
+  let _tplTodoItem = _.template(
+    '<div class="todo col-12 col-sm-8">' +
+      '<p><%= description %></p>' +
+    '</div>' +
+    '<div class="otherInfo col-12  col-sm-4">' +
+      '<div class="row">' +
+        '<div class="dueDate col-6">' +
+          '<p id="<%= dueDateId %>"><span class="d-sm-none">Due: </span><%= dueDate %></p>' +
+        '</div>' +
+        '<div class="icons col-6">' +
+          '<div class="row">' +
+            '<div class="status col-4" id="<%= statusId %>" data-status="<%= status %>">' +
+              '<a href="#">' +
+                '<i class="notDone far fa-square ' +
+                  '<% if (status !== "not done") { %>' +
+                    'd-none' +
+                  '<% } %>' +
+                  '" title="Click to mark as done."></i>' +
+                '<i class="done fas fa-check-square ' +
+                  '<% if (status !== "done") { %>' +
+                    'd-none' +
+                  '<% } %>' +
+                '" title="Task is done. (Click to reset.)"></i>' +
+              '</a>' +
+            '</div>' +
+            '<div class="editTodo col-4" id="<%= editId %>">' +
+              '<a href="#">' +
+                '<i class="fas fa-pencil-alt" title="Edit task"></i>' +
+              '</a>' +
+            '</div>' +
+            '<div class="delTodo col-4" id="<%= deleteId %>">' +
+              '<a href="#">' +
+                '<i class="fas fa-times" title="Delete task"></i>' +
+              '</a>' +
             '</div>' +
           '</div>' +
         '</div>' +
-      '</div>'
+      '</div>' +
+    '</div>'
   );
   
   /*
@@ -82,34 +86,34 @@ SS.template = (function() {
   // Public API
   let publicAPI = {
 
-      // Get detail for NEW todo item (includes outer div with data-id set to rowId)
-      getNewTodoItemHTML: function(rowInfo, i) {
-        let newTodoListHTML = '<div class = "todoItem row" data-id="' + rowInfo.rowId + '" id="todo_' + i + '">';
-        newTodoListHTML += _tplTodoItem(getTemplateInfo(rowInfo, i));
-        newTodoListHTML += '</div>';
+    // Get detail for NEW todo item (includes outer div with data-id set to rowId)
+    getNewTodoItemHTML: function(rowInfo, i) {
+      let newTodoListHTML = '<div class = "todoItem row" data-id="' + rowInfo.rowId + '" id="todo_' + i + '">';
+      newTodoListHTML += _tplTodoItem(getTemplateInfo(rowInfo, i));
+      newTodoListHTML += '</div>';
 
-        return newTodoListHTML;            
-      },
+      return newTodoListHTML;
+    },
 
-      // Get refreshed detail for an existing todo item
-      getTodoItemHTML: function(rowInfo, i) {
-        let todoItemHTML = _tplTodoItem(getTemplateInfo(rowInfo, i));
-        
-        return todoItemHTML;            
-      },
-    
-      // Get all todo list detail
-      getTodoListHTML: function(data) {
-        let todoListHTML = '';
+    // Get refreshed detail for an existing todo item
+    getTodoItemHTML: function(rowInfo, i) {
+      let todoItemHTML = _tplTodoItem(getTemplateInfo(rowInfo, i));
 
-        for (let i = 0; i < data.length; i++) {
-          todoListHTML += '<div class = "todoItem row" data-id="' + data[i].rowId + '" id="todo_' + i + '">';
-          todoListHTML += _tplTodoItem(getTemplateInfo(data[i], i));
-          todoListHTML += '</div>';
-        }
-        
-        return todoListHTML;            
+      return todoItemHTML;
+    },
+
+    // Get all todo list detail
+    getTodoListHTML: function(data) {
+      let todoListHTML = '';
+
+      for (let i = 0; i < data.length; i++) {
+        todoListHTML += '<div class = "todoItem row" data-id="' + data[i].rowId + '" id="todo_' + i + '">';
+        todoListHTML += _tplTodoItem(getTemplateInfo(data[i], i));
+        todoListHTML += '</div>';
       }
+
+      return todoListHTML;
+    }
   };
 
   return publicAPI;

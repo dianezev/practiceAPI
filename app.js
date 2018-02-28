@@ -1,3 +1,8 @@
+/*
+ * Sample Todo Manager web app using Smartsheet SDK & API
+ * by Diane Zevenbergen, dianezev@gmail.com
+ */
+
 'use strict';
 
 var config = require("./config.json");
@@ -6,9 +11,13 @@ var token = config.SMARTSHEET_ACCESS_TOKEN;
 
 // If not specified in config file, use API token from environment variable "SMARTSHEET_ACCESS_TOKEN"
 if (!token)
-    token = process.env.SMARTSHEET_ACCESS_TOKEN
+    token = process.env.SMARTSHEET_ACCESS_TOKEN;
 
 var sheetId = config.SHEET_ID;
+
+// If not specified in config file, use API token from environment variable "SHEET_ID"
+if (!sheetId)
+    sheetId = process.env.SHEET_ID;
 
 var client = require('smartsheet');
 
@@ -44,13 +53,12 @@ app.use(jsonParser);
 
 app.use(express.static(__dirname + '/public'));
 
-
 // Get all sheet data
 app.get('/todoSheet', function (request, response) {
   
   ss.sheets.getSheet({ id: sheetId })
   .then(function(sheet, options) {
-
+    
     // Build column map for later reference - 
     // converts column name to column id
     sheet.columns.forEach(function(column) {
@@ -62,7 +70,7 @@ app.get('/todoSheet', function (request, response) {
   .catch(function(error) {
     console.log('Error while loading sheet data...');
     console.log(error);
-  });  
+  });
 });
 
 
@@ -70,12 +78,12 @@ app.get('/todoSheet', function (request, response) {
 app.post('/todoSheet/toggleStatus', jsonParser, function (request, response) {
   let rowId = request.body.rowId;
   let status = request.body.status;
-
+  
   let updateInfo = {
       body: updateStatus(rowId, columnMap, status),
       sheetId: sheetId
   };
-
+  
   ss.sheets.updateRow(updateInfo)
     .then(function(results) {
       response.send(results.result);
@@ -108,12 +116,12 @@ app.post('/todoSheet/add', jsonParser, function (request, response) {
   let task = request.body.task;
   let status = request.body.status;
   let dueDate = request.body.dueDate;
-
+  
   let addNewRow = {
       body: addItem({task, status, dueDate}),
       sheetId: sheetId
   };
-
+  
   ss.sheets.addRows(addNewRow)
       .then(function(results) {
           response.send(results.result);
@@ -142,13 +150,13 @@ app.post('/todoSheet/edit', jsonParser, function (request, response) {
   let task = request.body.task;
   let status = request.body.status;
   let dueDate = request.body.dueDate;
-  let rowId =  request.body.rowId;  
+  let rowId =  request.body.rowId;
   
   let editRow = {
     body: updateItem({task, status, dueDate, rowId}),
     sheetId: sheetId
   };
-
+  
   ss.sheets.updateRow(editRow)
     .then(function(results) {
       response.send(results.result);
@@ -167,19 +175,19 @@ app.post('/todoSheet/edit', jsonParser, function (request, response) {
       }
     ];
     return row;
-  }  
+  }
 });
 
 
 // Delete a task
 app.post('/todoSheet/delete', jsonParser, function (request, response) {
-  let rowId =  request.body.rowId;  
+  let rowId =  request.body.rowId;
   
   let rowToDelete = {
     sheetId: sheetId,
     rowId: rowId
   };
-
+  
   ss.sheets.deleteRow(rowToDelete)
     .then(function(results) {
       response.send();
@@ -187,7 +195,7 @@ app.post('/todoSheet/delete', jsonParser, function (request, response) {
     .catch(function(error) {
       console.log('Error while deleting a task...');
       console.log(error);
-    });    
+    });
 });
 
 

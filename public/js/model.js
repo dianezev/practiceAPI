@@ -11,28 +11,37 @@ SS.model = (function() {
 
     for (let i = 0; i < columns.length ; i++) {
       let info = {index: columns[i].index, id: columns[i].id};
-      console.log(columns[i].title);
-      if (columns[i].title === "Tasks") {
-        columnInfo.tasks = info;
-      } else if (columns[i].title === "Status") {
-        columnInfo.status = info;
-      } else if (columns[i].title === "Due Date") {
-        columnInfo.dueDate = info;
+
+      switch (columns[i].title) {
+        case "Tasks":
+          columnInfo.tasks = info;
+          break;
+        case "Status":
+          columnInfo.status = info;
+          break;
+        case "Due Date":
+          columnInfo.dueDate = info;
+          break;
       }
     }
-  }  
+  }
   
   // Helper function maps cell info for one row into object
   function mapCellsToRow(cellInfo) {
     let info = {};
     
     for (let i = 0; i < cellInfo.length ; i++) {
-      if (cellInfo[i].columnId === columnInfo.tasks.id) {
-        info.task = cellInfo[i].displayValue;
-      } else if (cellInfo[i].columnId === columnInfo.status.id) {
-        info.status = cellInfo[i].displayValue;      
-      } else if (cellInfo[i].columnId === columnInfo.dueDate.id) {
-        info.dueDate = cellInfo[i].value;
+      
+      switch (cellInfo[i].columnId) {
+        case columnInfo.tasks.id:
+          info.task = cellInfo[i].displayValue;
+          break;
+        case columnInfo.status.id:
+          info.status = cellInfo[i].displayValue;
+          break;
+        case columnInfo.dueDate.id:
+          info.dueDate = cellInfo[i].value;
+          break;
       }
     }
     return info;
@@ -50,7 +59,9 @@ SS.model = (function() {
                          callback();
                         },
                         error: function(xhr, status, error) {
-                          alert('ajax ERROR: ' + error);
+                          alert('Sorry, there was an error. Your Smartsheet account cannot be ' +
+                                'accessed right now so the task was not deleted. Please check ' +
+                                'your connection and try again later. AJAX ERROR: ' + error);
                         }
                       };
       $.ajax(reqObject);
@@ -76,17 +87,18 @@ SS.model = (function() {
                          callback(resultsToDisplay);
                        },
                        error: function(xhr, status, error) {
-                         alert('ajax ERROR: ' + error);
+                         alert('Your Smartsheet account cannot be accessed' +
+                               'right now. Please check your connection ' +
+                               'and try again later. AJAX ERROR: ' + error);
                        }
                       };
       
       $.ajax(reqObject);
     },
 
-    // TBD: Consider either updating a single cell instead of full row or consolidating into updateTodoItem
+    // Save status change for a task
     toggleStatus: function(route, info, rowId, callback) {
-      console.log(info);
-      console.log({status: info.status, rowId});
+
       let rowInfo = {};
       
       let reqObject = {url: route,
@@ -97,7 +109,9 @@ SS.model = (function() {
                          callback(rowInfo);
                         },
                         error: function(xhr, status, error) {
-                          alert('ajax ERROR: ' + error);
+                          alert('Sorry, there was an error. Your Smartsheet account cannot be ' +
+                                'accessed right now so the status was not be changed. Please check ' +
+                                'your connection and try again later. AJAX ERROR: ' + error);
                         }
                       };
       $.ajax(reqObject);
@@ -114,12 +128,14 @@ SS.model = (function() {
                        data: {task: info.task, dueDate: info.dueDate, status: info.status, rowId},
                        type: 'POST',
                        success: function(rows) {
-                         rowInfo = mapCellsToRow(rows[0].cells);                      
+                         rowInfo = mapCellsToRow(rows[0].cells);
                          rowInfo.rowId = rows[0].id;
                          callback(rowInfo);
                         },
                         error: function(xhr, status, error) {
-                          alert('ajax ERROR: ' + error);
+                          alert('Sorry, there was an error. Your Smartsheet account cannot be ' +
+                                'accessed right now so the task was not added or changed. Please check ' +
+                                'your connection and try again later. AJAX ERROR: ' + error);
                         }
                       };
       $.ajax(reqObject);

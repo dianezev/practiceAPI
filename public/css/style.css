@@ -1,0 +1,283 @@
+  /*********************************************************
+ *    1. TAG SELECTORS
+ *    2. BACKGROUND/HEADER SECTION
+ *    3. TODO LIST
+ *    4. DELETE/EDIT/STATUS CHANGE ICONS
+ *    5. MODAL SECTION
+ *    6. FOOTER
+ *    7. MEDIA
+ **********************************************************/
+
+
+
+/*********************************************************
+ *  1. TAG SELECTORS
+ ********************************************************/
+body {
+  background-color: #0E2947;
+}
+body, html {
+  line-height: 1.8;
+  box-sizing:border-box;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar {
+  width: 0px;   /* remove scrollbar space */
+}
+/*html {overflow: -moz-scrollbars-none;}*/
+/*********************************************************
+ *  2. BACKGROUND/HEADER SECTION
+ ********************************************************/
+.fullHt {
+  height: 100%;
+}
+.addButton button {
+  background-color: #4871bf; 
+  color: white;
+  margin: 5px;
+}
+.addButton button:hover {
+  background-color: #3a5b9a; 
+  color: white;
+}
+.hdr {
+  line-height: 1.5;
+  margin-bottom: auto;
+  margin-top: auto;
+  padding: 0;
+}
+.hdr h6 {
+  color: #0E2947;
+  font-style: italic;
+  margin: auto;
+}
+.hide {
+  display: none;
+}
+.loader {
+  color: #868686;
+  height: 100vh;
+  position: absolute;
+  width: 100vw;
+  z-index: 99;
+}
+.shadow {
+  -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .4);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  -moz-box-shadow:    0 2px 4px 0 rgba(0, 0, 0, .4);  /* Firefox 3.5 - 3.6 */
+  box-shadow:         0 2px 4px 0 rgba(0, 0, 0, .4);  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+.todoHdr {
+/*  border-bottom: 2px solid #0E2947;*/
+  position: fixed; 
+  top:0px; 
+  left:0px; 
+  right:0px;
+}
+.todoHeaders {
+  background-color: #d7e5f2;
+}
+
+
+
+/*********************************************************
+ *  3. TODO LIST
+ ********************************************************/
+.todo {
+  font-size: 16px;
+  text-align: left;
+}
+.todo, .dueDate {
+  margin: auto;
+}
+.todo p, .otherInfo, .dueDate p, .status, .icons {
+  margin-bottom: auto;
+  margin-top: auto;
+}
+.todoItem {
+  border-bottom: 1px solid #51cbbe;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  text-align: center;
+}
+.todoItem:nth-child(even) {
+  background-color: #f7f7f3;
+}
+.todoItem:nth-child(odd) {
+  background-color: #eeeff0;
+}
+.todoList, .todoHdr {
+  max-width: 800px
+}
+.todoHdr {
+  z-index: 5;
+}
+.todoList {
+  min-height: 100vh;
+  z-index: 1;
+}
+
+
+/*********************************************************
+ *  4. DELETE/EDIT/STATUS CHANGE ICONS
+ ********************************************************/
+
+a:hover .done {
+  color: #026c48;  
+}
+a:hover .notDone {
+  color: #777777;
+}
+.delTodo, .editTodo, .status {
+  padding: 0;
+}
+.delTodo a {
+  color: #d80606;
+}
+.delTodo a:hover {
+  color: #a30202;
+}
+.done {
+  color: #059d69;  
+}
+.dueDate {
+  color: #767676;
+  font-style: italic;
+  text-align: center;
+}
+.editTodo a {
+  color: #4871bf;
+}
+.editTodo a:hover {
+  color: #3a5892;
+}
+.icons {
+  font-size: 24px;
+}
+.notDone {
+  color: darkgray;
+}
+
+
+/*********************************************************
+ *  5. MODAL SECTION
+ ********************************************************/
+.show {
+  display: block;
+}
+.modal {
+  background-color:rgba(0, 0, 0, .5);
+}
+
+
+/*************************************************************
+ * 6. FOOTER
+ *************************************************************/
+.bottom {
+  font-size: 5em;
+}
+.bottom .container {
+  position: relative;
+  height: 100px;
+}
+.bottom .container a {
+  color: white;
+  opacity: .7;
+}
+.bottom .container a:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+/*center class from CSS tricks*/
+.center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+/*********************************************************
+ *  7. MEDIA
+ ********************************************************/
+/*
+ * These screen sizes are based on bootstrap.css version 4
+ * xs < 576px
+ * sm >= 576px
+ * md >= 768px
+ * lg >= 992 px
+ * xl >= 1200px
+ */
+
+
+/*xs screen*/
+/*move 'Tasks' title to r align*/
+@media (min-width: 0px) {
+  body {
+    font-size: 12px;
+  }
+  .hdr {
+    text-align: right;
+  }
+  .hdr h6 {
+    font-size: 16px;
+  }
+  .otherInfo {
+/*    line-height: 1.2;*/
+  }
+  .todo {
+    font-size: 14px;
+  }
+  .todoHeaders {
+    border-top: none;
+  }
+  .todoHdr {
+    margin-top: 0;
+  }
+  .todoList {
+    margin-top: 48px;
+  }
+}
+
+/*sm screen*/
+@media (min-width: 576px) {
+  body {
+    font-size: 14px;
+  }
+  .hdr {
+    text-align: center;
+  }
+}
+
+/*md screen*/
+@media (min-width: 768px) {
+  body, .todo {
+    font-size: 16px;
+  }
+  .hdr h6 {
+    font-size: 18px;
+  }
+  .todoHeaders {
+    border-top: 20px solid #0E2947;
+    margin-top: -20px;
+  }
+  .todoHdr {
+    margin-top: 20px;
+  }
+  .todoList {
+    margin-top: 68px;
+  }
+}
+  
+/*lg screen*/
+@media (min-width: 992px) {
+}
+
+/*xl screen*/
+@media (min-width: 1200px) {
+
+}
+
+

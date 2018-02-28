@@ -5,15 +5,19 @@ SS.controller = (function() {
   
   let model = SS.model;
   let view = SS.view;
+  
+  /*
+   * Use codes to access specific task for modification
+   * in back-end (rowId) and DOM manipulation (index used in id selectors)
+   */
   let codes = {rowId: -1, index: -1};
   
   /*
-   * Use max ctr to keep track of indexes that are used 
-   * in HTML id selectors for each task. 
-   * Increment when adding a task to ensure that
-   * unique ids are used for each addition.
-   * (Note these indexes won't be contiguous after a deletion -
-   * so maxCtr doesn't nec. equal total # of tasks.)
+   * Use max ctr to keep track of next available indexes that 
+   * can be used in HTML id selectors when adding a task. 
+   * (Increment when adding a task to ensure that
+   * unique ids are used for each addition,
+   * but don't decrement when deleting a task.)
    */
   let maxCtr = 0;
     
@@ -46,25 +50,24 @@ SS.controller = (function() {
     
     // Delete a task
     deleteTodo: function(deleteId) {
-      console.log(deleteId);
-      
-//      let curStatus = $('#' + statusId)[0].dataset.status;
-//      let newStatus = (curStatus === "not done") ? "done" : "not done";
-//      let info = {status: newStatus};
       let route = '/todoSheet/delete';
       
       updateCodes(deleteId);
       
+      view.showLoader(); 
       model.deleteTodoItem(route, codes.rowId, function() {
         view.removeItem(codes.index);
+        view.hideLoader();
       });
     },
     
     // Initialize data for all tasks
     initialize: function() {
+      view.showLoader(); 
       model.getData('/todoSheet', function(data) {
         maxCtr = data.length;
         view.refreshTodoList(data);
+        view.hideLoader(); 
       });
     },
     
@@ -85,8 +88,10 @@ SS.controller = (function() {
         codes.index = maxCtr++;
         route = '/todoSheet/add';
         
+        view.showLoader(); 
         model.updateTodoItem(route, info, null, function (data) {
           view.displayNewTodoItem(data, codes.index);
+          view.hideLoader(); 
         });
         
       /*
@@ -96,9 +101,11 @@ SS.controller = (function() {
       } else if (btnText === 'Save changes') {
         route = '/todoSheet/edit';
         
+        view.showLoader(); 
         model.updateTodoItem(route, info, codes.rowId, function (data) {
           view.refreshTodoItem(data, codes.index);
-        });      
+          view.hideLoader(); 
+        });
       }
     },
     
@@ -123,8 +130,10 @@ SS.controller = (function() {
       
       updateCodes(statusId);
       
+      view.showLoader(); 
       model.toggleStatus(route, info, codes.rowId, function(rowInfo) {
         view.refreshStatus(rowInfo, codes.index);
+        view.hideLoader();
       });
     }    
   };
