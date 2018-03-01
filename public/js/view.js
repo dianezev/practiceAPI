@@ -58,9 +58,17 @@ SS.view = (function() {
     },
     
     // Refresh UI after adding task
-    displayNewTodoItem: function(rowInfo, index) {
-      let newTodoItemHTML = template.getNewTodoItemHTML(rowInfo, index);
-      $('#todoListDetail').prepend(newTodoItemHTML);
+    displayNewTodoItem: function(data, index) {
+      
+      // If error during add, alert user
+      if (data.hasOwnProperty('err')) {
+        alert(data.err);
+        
+      // Otherwise update UI
+      } else {
+        let newTodoItemHTML = template.getNewTodoItemHTML(data.rowInfo, index);
+        $('#todoListDetail').prepend(newTodoItemHTML);
+      }
     },
     
     // Hide wait symbol after read/write finished
@@ -74,29 +82,61 @@ SS.view = (function() {
     },
 
     // Refresh UI after status change
-    refreshStatus: function(rowInfo, index) {
-      let todoItemHTML = template.getTodoItemHTML(rowInfo, index);
-      $('#todo_' + index).empty().append(todoItemHTML);
+    refreshStatus: function(data, index) {
+      
+      // If error during status change, alert user
+      if (data.hasOwnProperty('err')) {
+        alert(data.err);
+        
+      // Otherwise update UI
+      } else {
+        let todoItemHTML = template.getTodoItemHTML(data.rowInfo, index);
+        $('#todo_' + index).empty().append(todoItemHTML);
+      }
     },
 
     // Refresh UI after editing task
-    refreshTodoItem: function(rowInfo, index) {
-      let todoItemHTML = template.getTodoItemHTML(rowInfo, index);
-      $('#todo_' + index).empty().append(todoItemHTML);
+    refreshTodoItem: function(data, index) {
+      
+      // If error during edit, alert user
+      if (data.hasOwnProperty('err')) {
+        alert(data.err);
+        
+      // Otherwise update UI
+      } else {
+        let todoItemHTML = template.getTodoItemHTML(data.rowInfo, index);
+        $('#todo_' + index).empty().append(todoItemHTML);
+      }
     },
     
     // Refresh UI for all tasks
     refreshTodoList: function(data) {
-      let todoListHTML = template.getTodoListHTML(data);
-      $('#todoListDetail').empty().append(todoListHTML);
-      $('#header').fadeIn().removeClass('d-none');
-      $('#content').fadeIn().removeClass('d-none');
-      $('#footer').fadeIn().removeClass('d-none');
+      
+      // If Smartsheet call succeeded, display info
+      if (data.hasOwnProperty('todoInfo')) {
+        let todoListHTML = template.getTodoListHTML(data.todoInfo);
+        $('#todoListDetail').empty().append(todoListHTML);
+        $('#header').fadeIn().removeClass('d-none');
+        $('#content').fadeIn().removeClass('d-none');
+        $('#footer').fadeIn().removeClass('d-none');
+        
+      // Otherwise, alert user about failure
+      } else {
+        alert(data.err);
+      }
     },
     
     // Refresh UI after deleting task
-    removeItem: function(index) {
-      $('#todo_' + index).remove();
+    removeItem: function(index, result) {
+      
+      // If error deleting task alert user
+      if (result.hasOwnProperty('err')) {
+        alert(result.err);
+        
+      // Otherwise update UI
+      } else {
+        $('#todo_' + index).remove();
+      }
     },
 
     // Show wait symbol when waiting for read/write

@@ -55,8 +55,8 @@ SS.controller = (function() {
       updateCodes(deleteId);
       
       view.showLoader(); 
-      model.deleteTodoItem(route, codes.rowId, function() {
-        view.removeItem(codes.index);
+      model.deleteTodoItem(route, codes.rowId, function(result) {
+        view.removeItem(codes.index, result);
         view.hideLoader();
       });
     },
@@ -134,8 +134,8 @@ SS.controller = (function() {
       updateCodes(statusId);
       
       view.showLoader(); 
-      model.toggleStatus(route, info, codes.rowId, function(rowInfo) {
-        view.refreshStatus(rowInfo, codes.index);
+      model.toggleStatus(route, info, codes.rowId, function(data) {
+        view.refreshStatus(data, codes.index);
         view.hideLoader();
       });
     }    

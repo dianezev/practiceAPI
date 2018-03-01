@@ -55,13 +55,18 @@ SS.model = (function() {
       let reqObject = {url: route,
                        data: {rowId},
                        type: 'POST',
-                       success: function() {
-                         callback();
+                       success: function(results) {
+                         let data = {};
+                         
+                         if (results.hasOwnProperty('error')) {
+                           data.err = 'Sorry, there was an error. Your Smartsheet account cannot be ' +
+                                      'accessed right now so the task was not deleted. Please check ' +
+                                      'your connection and try again later.';
+                         }
+                         callback(data);
                         },
                         error: function(xhr, status, error) {
-                          alert('Sorry, there was an error. Your Smartsheet account cannot be ' +
-                                'accessed right now so the task was not deleted. Please check ' +
-                                'your connection and try again later. AJAX ERROR: ' + error);
+                          console.log('response send err was ' + error);
                         }
                       };
       $.ajax(reqObject);
@@ -72,24 +77,35 @@ SS.model = (function() {
       
       let reqObject = {url: route,
                        success: function(results) {
-                         let resultsToDisplay = [];
-                         let rows = results.rows;
+                         let data = {};
                          
-                         getColumnInfoByTitle(results.columns);
-                         
-                         for (let i = 0; i < rows.length ; i++) {
-                           resultsToDisplay[i] = {};
-                           resultsToDisplay[i].task = rows[i].cells[columnInfo.tasks.index].displayValue;
-                           resultsToDisplay[i].status = rows[i].cells[columnInfo.status.index].displayValue;
-                           resultsToDisplay[i].dueDate = rows[i].cells[columnInfo.dueDate.index].value;
-                           resultsToDisplay[i].rowId = rows[i].id;
+                         // If no error returned get results
+                         if (!results.hasOwnProperty('error')) {
+                           data.todoInfo = [];
+                           let rows = results.rows;
+
+                           getColumnInfoByTitle(results.columns);
+
+                           for (let i = 0; i < rows.length ; i++) {
+                             data.todoInfo[i] = {};
+                             data.todoInfo[i].task = rows[i].cells[columnInfo.tasks.index].displayValue;
+                             data.todoInfo[i].status = rows[i].cells[columnInfo.status.index].displayValue;
+                             data.todoInfo[i].dueDate = rows[i].cells[columnInfo.dueDate.index].value;
+                             data.todoInfo[i].rowId = rows[i].id;
+                           }
+                           
+                        // Otherwise, return error message
+                         } else {
+                           console.log(results.error);
+                           data.err = 'Your Smartsheet account cannot be accessed ' +
+                                      'right now. Please check your connection ' +
+                                      'and try again later.';
                          }
-                         callback(resultsToDisplay);
+                         
+                         callback(data);
                        },
-                       error: function(xhr, status, error) {
-                         alert('Your Smartsheet account cannot be accessed' +
-                               'right now. Please check your connection ' +
-                               'and try again later. AJAX ERROR: ' + error);
+                       error: function(error) {
+                         console.log('response send err was ' + error);
                        }
                       };
       
@@ -104,14 +120,24 @@ SS.model = (function() {
       let reqObject = {url: route,
                        data: {status: info.status, rowId},
                        type: 'POST',
-                       success: function(rows) {
-                         rowInfo = mapCellsToRow(rows[0].cells);                                               
-                         callback(rowInfo);
+                       success: function(results) {
+                         let data = {};
+                         
+                         // If no error returned get results
+                         if (!results.hasOwnProperty('error')) {
+                           data.rowInfo = mapCellsToRow(results.result[0].cells);
+                          
+                        // Otherwise, return error message
+                         } else {
+                           console.log(results.error);
+                           data.err = 'Sorry, there was an error. Your Smartsheet account cannot be ' +
+                                      'accessed right now so the status was not be changed. Please check ' +
+                                      'your connection and try again later.';
+                         }
+                         callback(data);
                         },
                         error: function(xhr, status, error) {
-                          alert('Sorry, there was an error. Your Smartsheet account cannot be ' +
-                                'accessed right now so the status was not be changed. Please check ' +
-                                'your connection and try again later. AJAX ERROR: ' + error);
+                          console.log('response send err was ' + error);
                         }
                       };
       $.ajax(reqObject);
@@ -127,15 +153,26 @@ SS.model = (function() {
       let reqObject = {url: route,
                        data: {task: info.task, dueDate: info.dueDate, status: info.status, rowId},
                        type: 'POST',
-                       success: function(rows) {
-                         rowInfo = mapCellsToRow(rows[0].cells);
-                         rowInfo.rowId = rows[0].id;
-                         callback(rowInfo);
+                       success: function(results) {
+                         let data = {};
+                         
+                         // If no error returned, get results
+                         if (!results.hasOwnProperty('error')) {
+                           let rows = results.result;
+                           data.rowInfo = mapCellsToRow(rows[0].cells);
+                           data.rowInfo.rowId = rows[0].id;
+                           
+                        // Otherwise, return error message
+                         } else {
+                           console.log(results.error);
+                           data.err = 'Sorry, there was an error. Your Smartsheet account cannot be ' +
+                                      'accessed right now so the task was not added or changed. Please check ' +
+                                      'your connection and try again later.';
+                         }
+                         callback(data);
                         },
                         error: function(xhr, status, error) {
-                          alert('Sorry, there was an error. Your Smartsheet account cannot be ' +
-                                'accessed right now so the task was not added or changed. Please check ' +
-                                'your connection and try again later. AJAX ERROR: ' + error);
+                          console.log('response send err was ' + error);
                         }
                       };
       $.ajax(reqObject);

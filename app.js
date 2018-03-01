@@ -70,6 +70,7 @@ app.get('/todoSheet', function (request, response) {
   .catch(function(error) {
     console.log('Error while loading sheet data...');
     console.log(error);
+    response.send({error});
   });
 });
 
@@ -86,11 +87,12 @@ app.post('/todoSheet/toggleStatus', jsonParser, function (request, response) {
   
   ss.sheets.updateRow(updateInfo)
     .then(function(results) {
-      response.send(results.result);
+      response.send(results);
     })
     .catch(function(error) {
       console.log('Error while changing done/not done status...');
       console.log(error);
+      response.send({error});
     });
   
   // Returns status detail to be updated
@@ -124,11 +126,12 @@ app.post('/todoSheet/add', jsonParser, function (request, response) {
   
   ss.sheets.addRows(addNewRow)
       .then(function(results) {
-          response.send(results.result);
+          response.send(results);
       })
       .catch(function(error) {
         console.log('Error while adding a new task...');
         console.log(error);
+        response.send({error});
       });
   
   // Returns details for task to be added
@@ -159,11 +162,12 @@ app.post('/todoSheet/edit', jsonParser, function (request, response) {
   
   ss.sheets.updateRow(editRow)
     .then(function(results) {
-      response.send(results.result);
+      response.send(results);
     })
     .catch(function(error) {
       console.log('Error while updating task info...');
       console.log(error);
+      response.send({error});
     });
 
   // Returns cell details for task update
@@ -195,6 +199,7 @@ app.post('/todoSheet/delete', jsonParser, function (request, response) {
     .catch(function(error) {
       console.log('Error while deleting a task...');
       console.log(error);
+      response.send({error});
     });
 });
 
