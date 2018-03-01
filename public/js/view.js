@@ -6,37 +6,71 @@ SS.view = (function() {
   
   let template = SS.template;
   
-  // Helper function returns ISO date from mm/dd/yyyy format
+  /*
+   * Helper function returns ISO date from mm/dd/yyyy format
+   * (if invalid date, alerts user & returns '')
+   */
   function getISODate(date) {
     let isoDate = '';
     let d = new Date(date);
-    
-    if (d instanceof Date && !isNaN(d.valueOf())) {
-      let month = (d.getMonth() < 9) ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
-      let day = (d.getDate() < 10) ? '0' + d.getDate() : d.getDate();
-      isoDate = d.getFullYear() + '-' + month + '-' + day;
+
+    // If date is valid get ISO format
+    if (!isNaN( d.getTime())) {
+      isoDate = d.toISOString().substring(0,10);
     }
+    
     return isoDate;
   }
   
   // Public API
   let publicAPI = {
     
+    attachDatePicker: function() {
+        $('#dueDateInput').datepicker({
+            uiLibrary: 'bootstrap4'
+        });    
+    },
+    
     // Close modal without saving any edits/additions
     cancelEditModal: function() {
       $('#inputModal').removeClass('show');
+    },
+    
+    checkModalInputs() {
+      let info = {};
+      
+      info.isValid = true;
+      info.task = $('#taskInput').val();
+      info.dueDate = getISODate($('#dueDateInput').val());
+      info.status = $('#statusInput').val();
+
+      // Alert user if task desciption is blank or & invalid date
+      if (info.task.trim() === '') {
+        alert('Please enter a description for the task.');
+        info.isValid = false;
+        
+      } else if (info.dueDate === '') {
+        alert('Please enter a valid date in mm/dd/yyyy format.');
+        info.isValid = false;
+      }
+      
+      return info;
     },
     
     // Refresh UI after adding task
     displayNewTodoItem: function(rowInfo, index) {
       let newTodoItemHTML = template.getNewTodoItemHTML(rowInfo, index);
       $('#todoListDetail').prepend(newTodoItemHTML);
-      $('#inputModal').removeClass('show');
     },
     
-    // Hide wait symbol when read/write finished
+    // Hide wait symbol after read/write finished
     hideLoader: function() {
       $('.loader').fadeOut('slow');
+    },
+    
+    // Hide modal
+    hideModal: function() {
+      $('#inputModal').removeClass('show');
     },
 
     // Refresh UI after status change
@@ -49,7 +83,6 @@ SS.view = (function() {
     refreshTodoItem: function(rowInfo, index) {
       let todoItemHTML = template.getTodoItemHTML(rowInfo, index);
       $('#todo_' + index).empty().append(todoItemHTML);
-      $('#inputModal').removeClass('show');
     },
     
     // Refresh UI for all tasks
@@ -89,7 +122,7 @@ SS.view = (function() {
         info = {title: 'Edit task information',
                 task: $('#todo_' + index + ' .todo p').text(),
                 status: $('#status_' + index).data('status'),
-                dueDate: $('#dueDate_' + index).text(),
+                dueDate: $('#dueDate_' + index + ' span.date').text(),
                 confirmButton: 'Save changes'
                };
       }
@@ -97,7 +130,7 @@ SS.view = (function() {
       // Put task info into modal
       $('#inputModalDescrip').empty().append(info.title);
       $('#taskInput').empty().val(info.task);
-      $('#dueDateInput').empty().val(getISODate(info.dueDate));
+      $('#dueDateInput').empty().val(info.dueDate);
       $('#statusInput').val(info.status);
       $('#saveInfo').text(info.confirmButton);
 

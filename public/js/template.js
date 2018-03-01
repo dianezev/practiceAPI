@@ -16,7 +16,10 @@ SS.template = (function() {
     '<div class="otherInfo col-12  col-sm-4">' +
       '<div class="row">' +
         '<div class="dueDate col-6">' +
-          '<p id="<%= dueDateId %>"><span class="d-sm-none">Due: </span><%= dueDate %></p>' +
+          '<p id="<%= dueDateId %>">' +
+            '<span class="d-sm-none">Due: </span>' +
+            '<span class="date"><%= dueDate %></span>' +
+          '</p>' +
         '</div>' +
         '<div class="icons col-6">' +
           '<div class="row">' +

@@ -20,7 +20,7 @@ SS.controller = (function() {
    * but don't decrement when deleting a task.)
    */
   let maxCtr = 0;
-    
+
   /*
    * Parses an index off of various id names ('status_5', 'edit_4' etc.)
    * and sets private var to keep track of rowId & index during edit
@@ -63,6 +63,7 @@ SS.controller = (function() {
     
     // Initialize data for all tasks
     initialize: function() {
+      view.attachDatePicker();
       view.showLoader(); 
       model.getData('/todoSheet', function(data) {
         maxCtr = data.length;
@@ -73,39 +74,41 @@ SS.controller = (function() {
     
     // Save changes and refresh display for new or edited task
     saveTodoInfo: function(btnText) {
-      let info = {};
       let route;
+      let info = view.checkModalInputs();
       
-      info.task = $('#taskInput').val();
-      info.dueDate = $('#dueDateInput').val();
-      info.status = $('#statusInput').val();
-      
-      /*
-       * Save data for ADD task and get a new
-       * index to use in the HTML ids (since this is a new task)
-       */
-      if (btnText === 'Save new task') {
-        codes.index = maxCtr++;
-        route = '/todoSheet/add';
+      // If inputs in modal were valid, proceed with saving data
+      if (info.isValid) {
         
-        view.showLoader(); 
-        model.updateTodoItem(route, info, null, function (data) {
-          view.displayNewTodoItem(data, codes.index);
-          view.hideLoader(); 
-        });
-        
-      /*
-       * Save data for EDIT task. Use the rowId and index that was
-       * stored to 'codes' when user selected edit option (see controller.showModal)
-       */
-      } else if (btnText === 'Save changes') {
-        route = '/todoSheet/edit';
-        
-        view.showLoader(); 
-        model.updateTodoItem(route, info, codes.rowId, function (data) {
-          view.refreshTodoItem(data, codes.index);
-          view.hideLoader(); 
-        });
+        /*
+         * Save data for ADD task and get a new
+         * index to use in the HTML ids (since this is a new task)
+         */
+        if (btnText === 'Save new task') {
+          codes.index = maxCtr++;
+          route = '/todoSheet/add';
+
+          view.showLoader(); 
+          model.updateTodoItem(route, info, null, function (data) {
+            view.displayNewTodoItem(data, codes.index);
+            view.hideModal();
+            view.hideLoader(); 
+          });
+
+        /*
+         * Save data for EDIT task. Use the rowId and index that was
+         * stored to 'codes' when user selected edit option (see controller.showModal)
+         */
+        } else if (btnText === 'Save changes') {
+          route = '/todoSheet/edit';
+
+          view.showLoader(); 
+          model.updateTodoItem(route, info, codes.rowId, function (data) {
+            view.refreshTodoItem(data, codes.index);
+            view.hideModal();
+            view.hideLoader(); 
+          });
+        }
       }
     },
     
