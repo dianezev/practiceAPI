@@ -18,14 +18,18 @@ _About this web-app: The To-do List Manager uses Smartsheet's API to access and 
       width="400"
     />
 </p>
+
 2. The _column properties_ needed for the Smartsheet To-do-List:
-  + __Status__ column properties set to _Dropdown List_ with options __not done__ and __done__.
-  + __Due Date__ column properties set to _Date_.
-2. A smartsheet __access token__ and a __sheet id__ for the relevant To-do List in the user's Smartsheet account. (instructions available [here](https://smartsheet-platform.github.io/api-docs/)).
 
-3. A Node.js development environment.
+    + __Status__ column properties set to _Dropdown List_ with options __not done__ and __done__.
 
-4. An internet connection.
+    + __Due Date__ column properties set to _Date_.
+
+3. A smartsheet __access token__ and a __sheet id__ for the relevant To-do List in the user's Smartsheet account. (instructions available [here](https://smartsheet-platform.github.io/api-docs/)).
+
+4. A Node.js development environment.
+
+5. An internet connection.
 
 ## Setup
 1. Download the app from Github at [https://github.com/dianezev/practiceAPI](https://github.com/dianezev/practiceAPI).
